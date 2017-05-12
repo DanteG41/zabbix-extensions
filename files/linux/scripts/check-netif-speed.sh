@@ -9,6 +9,8 @@ print_usage() {
         exit
 }
 
+first=1
+
 [[ $(which ethtool) ]] || { echo "FATAL: ethtool not found."; exit 1; }
 [[ -n $@ ]] || { print_usage; exit 1; }
 
@@ -25,9 +27,11 @@ case "$MODE" in
 	printf "\t\"data\":[\n\n";
 	for interface in ${physActiveIfList}
 	do
+		[ $first != 1 ] && printf ",\n";
+		first=0;
 		printf "\t{\n";
 		printf "\t\t\"{#PHYS_IFNAME}\":\"$interface\"\n";
-		printf "\t},\n";
+		printf "\t}";
 	done
 	printf "\n\t]\n";
 	printf "}\n";
