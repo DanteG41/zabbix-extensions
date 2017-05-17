@@ -40,19 +40,19 @@ case "$PARAM" in
         $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $5} END {print sum}'
 ;;
 'sv_idle' )
-        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $6}} END {print sum}'
+        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $6} END {print sum}'
 ;;
 'sv_used' )
-        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $7}} END {print sum}'
+        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $7} END {print sum}'
 ;;
 'sv_tested' )
-        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $8}} END {print sum}'
+        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $8} END {print sum}'
 ;;
 'sv_login' )
         $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $9} END {print sum}'
 ;;
 'maxwait' )
-        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $10}} END {print sum}'
+        $PSQL $conn_param -c "show pools" | awk -v "POOL_NAME=$2" -F ":" '$1 ~ POOL_NAME {sum += $10} END {print sum}'
 ;;
 'free_clients' )
         $PSQL $conn_param -c "show lists" |grep -w free_clients |cut -d: -f2
