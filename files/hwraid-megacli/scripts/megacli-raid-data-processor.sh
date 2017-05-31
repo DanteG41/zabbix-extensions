@@ -53,6 +53,16 @@ for pd in $pd_list;
   done
 echo "### pd section end ###" >> $data_tmp
 
+# берем информацию о bbu для каждого контроллера
+echo "### bbu section begin ###" >> $data_tmp
+for adp in $adp_list;
+  do
+    echo "### bbu begin $adp ###" >> $data_tmp
+    $megacli adpbbucmd getbbustatus a$adp nolog >> $data_tmp
+    echo "### bbu end $adp ###" >> $data_tmp
+  done
+echo "### bbu section end ###" >> $data_tmp
+
 mv $data_tmp $data_out
 
 echo -n > $all_keys
@@ -61,7 +71,7 @@ echo -n > $zbx_data
 # формируем список ключей для zabbix
 for a in $adp_list; 
   do
-    echo -n -e "megacli.adp.name[$a]\nmegacli.ld.degraded[$a]\nmegacli.ld.offline[$a]\nmegacli.pd.total[$a]\nmegacli.pd.critical[$a]\nmegacli.pd.failed[$a]\nmegacli.mem.err[$a]\nmegacli.mem.unerr[$a]\n"; 
+    echo -n -e "megacli.adp.name[$a]\nmegacli.ld.degraded[$a]\nmegacli.ld.offline[$a]\nmegacli.pd.total[$a]\nmegacli.pd.critical[$a]\nmegacli.pd.failed[$a]\nmegacli.mem.err[$a]\nmegacli.mem.unerr[$a]\nmegacli.bbu.state[$a]\n";
   done >> $all_keys
 
 for l in $ld_list;
@@ -113,6 +123,11 @@ cat $all_keys | while read key; do
   if [[ "$key" == *megacli.mem.unerr* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d, -f1)
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |grep -m1 -w "Memory Uncorrectable Errors" |cut -d: -f2 |tr -d " ")
+     echo "$(hostname) $key $value" >> $zbx_data
+  fi
+  if [[ "$key" == *megacli.bbu.state* ]]; then
+     adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d, -f1)
+     value=$(sed -n -e "/bbu begin $adp/,/bbu end $adp/p" $data_out |grep -m1 -w "Battery State" |cut -d: -f2 |tr -d " ")
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *megacli.ld.state* ]]; then
