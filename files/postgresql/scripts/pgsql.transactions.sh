@@ -44,6 +44,9 @@ case "$PARAM" in
 'pending_xa_max_time' )
 	query="SELECT COALESCE(EXTRACT (EPOCH FROM max(age(NOW(), prepared))), 0) as d FROM pg_prepared_xacts;"
 ;;
+'transactions_counter' )
+	query="SELECT sum(xact_commit+xact_rollback) FROM pg_stat_database;"
+;;
 '*' ) echo "ZBX_NOTSUPPORTED"; exit 1;;
 esac
 
