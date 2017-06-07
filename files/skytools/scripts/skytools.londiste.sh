@@ -18,7 +18,7 @@ PARAM="$1"
 
 case "$PARAM" in
 'node_without_queue' )
-        q="SELECT count(*) FROM pgq_node.node_info WHERE queue_name NOT IN (SELECT queue_name FROM pgq.queue)"
+        q="SELECT count(*) FROM pgq_node.node_info  WHERE node_type ='root' AND queue_name NOT IN (SELECT queue_name FROM pgq.queue)"
 ;;
 * ) echo ZBX_NOTSUPPORTED; exit 1;;
 esac
