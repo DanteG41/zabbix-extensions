@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="6ce708f"
+ZBX_EXT_GIT_SHA1="aaae6f2"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
@@ -136,7 +136,8 @@ src_install() {
 			files/postgresql/scripts/pgsql.trigger.sh \
 			files/postgresql/scripts/pgsql.wal.write.sh \
 			files/postgresql/scripts/pgsql.denorm.field.discovery.sh \
-			files/postgresql/scripts/pgsql.denorm.field.stat.sh
+			files/postgresql/scripts/pgsql.denorm.field.stat.sh \
+			files/postgresql/scripts/pgsql.stat_statements.sh
 	fi
 
 	if use glusterfs-client; then
