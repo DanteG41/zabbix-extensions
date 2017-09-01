@@ -76,48 +76,57 @@ cat $all_keys | while read key; do
   if [[ "$key" == *adaptec.adp.status* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |grep -w "Controller Status" |awk '{print $4}')
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.adp.name* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |grep -w "Controller Model" |awk -F: '{print $2}')
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.adp.temp* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |grep -wE "[ ]+Temperature[ ]+" |awk '{print $3}')
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.adp.ld_total* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |grep -w "Logical devices/Failed/Degraded" |cut -d: -f2 |tr -d ' ' |cut -d/ -f1)
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.adp.ld_failed* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |grep -w "Logical devices/Failed/Degraded" |cut -d: -f2 |tr -d ' ' |cut -d/ -f2)
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.adp.ld_degraded* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |grep -w "Logical devices/Failed/Degraded" |cut -d: -f2 |tr -d ' ' |cut -d/ -f3)
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.bbu.status* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
      value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |sed -n -e '/Controller Battery Information/,/Status/p' |grep -w Status |cut -d: -f2 |tr -d ' ')
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.ld.status* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      ld=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
      value=$(sed -n -e "/ld begin $adp $ld/,/ld end $adp $ld/p" $data_out |grep -w "Status of logical device" |cut -d: -f2 |tr -d ' ')
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.pd.status* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      pd=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
      value=$(sed -n -e "/pd begin $adp $pd/,/ld end $adp $pd/p" $data_out |sed -n -e "/Device #$pd/,/Device #/p" |grep -m1 -wE '[ ]+State[ ]+' |cut -d: -f2 |tr -d ' ')
+     [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
 done
