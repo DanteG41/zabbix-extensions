@@ -7,15 +7,15 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="f72e1e0"
+ZBX_EXT_GIT_SHA1="b55d809"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
 LICENSE="as-is"
 SLOT="0"
 KEYWORDS="amd64 ~x86"
-IUSE="asterisk flashcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
-sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash"
+IUSE="asterisk flashcache dmcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
+sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash docker"
 
 HWRAID="adaptec smartarray megacli"
 
@@ -39,7 +39,8 @@ DEPEND=">=net-analyzer/zabbix-2.0.0
 		smartmon? ( sys-apps/smartmontools )
 		ruby-vines? ( dev-db/redis )
 		elasticsearch? ( net-misc/curl )
-		logstash? ( net-misc/curl )"
+		logstash? ( net-misc/curl )
+		docker? ( app-emulation/docker )"
 RDEPEND="${DEPEND}"
 
 src_install() {
@@ -135,7 +136,8 @@ src_install() {
 			files/postgresql/scripts/pgsql.trigger.sh \
 			files/postgresql/scripts/pgsql.wal.write.sh \
 			files/postgresql/scripts/pgsql.denorm.field.discovery.sh \
-			files/postgresql/scripts/pgsql.denorm.field.stat.sh
+			files/postgresql/scripts/pgsql.denorm.field.stat.sh \
+			files/postgresql/scripts/pgsql.stat_statements.sh
 	fi
 
 	if use glusterfs-client; then
@@ -155,12 +157,22 @@ src_install() {
 			files/flashcache/scripts/flashcache.vol.discovery.sh
     fi
 
+	if use dmcache; then
+		insinto /etc/zabbix/zabbix_agentd.d
+	doins files/dmcache/dmcache.conf
+	exeinto /usr/libexec/zabbix-extensions/scripts
+	doexe \
+		files/dmcache/scripts/dmcache.discovery.sh \
+		files/dmcache/scripts/dmcache.stat.sh
+	fi
+
 	if use sphinx2; then
 		insinto /etc/zabbix/zabbix_agentd.d
         doins files/sphinx2/sphinx2.conf
 	exeinto /usr/libexec/zabbix-extensions/scripts
 	doexe \
-		files/sphinx2/scripts/check-sphinx-indices.sh
+		files/sphinx2/scripts/check-sphinx-indices.sh \
+		files/sphinx2/scripts/sphinx2.fd.sh
     fi
 
 	if use skytools; then
@@ -168,8 +180,10 @@ src_install() {
         doins files/skytools/skytools.conf
         exeinto /usr/libexec/zabbix-extensions/scripts
         doexe \
-            files/skytools/scripts/skytools.pgqd.queue.discovery.sh \
-			files/skytools/scripts/skytools.pgqd.sh
+        	files/skytools/scripts/skytools.pgqd.queue.discovery.sh \
+		files/skytools/scripts/skytools.pgqd.sh \
+		files/skytools/scripts/skytools.londiste.sh
+
     fi
 
 	if use testcookie; then
@@ -259,6 +273,15 @@ src_install() {
 		doexe \
 			files/logstash/scripts/logstash.instance.discovery.sh \
 			files/logstash/scripts/logstash.memory.use.sh
+	fi
+
+	if use docker; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/docker/docker.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe \
+			files/docker/scripts/docker-container-discovery.sh \
+			files/docker/scripts/docker-container-status.sh
 	fi
 
 
