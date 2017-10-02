@@ -56,7 +56,8 @@ src_install() {
 		files/linux/scripts/swap.discovery.sh \
 		files/linux/scripts/check-netif-speed.sh \
 		files/linux/scripts/cave-pkg-discovery.sh \
-		files/linux/scripts/check-oom.awk
+		files/linux/scripts/check-oom.awk \
+		files/linux/scripts/bonding-discovery.sh
 
 	insinto /etc/cron.d
 	doins files/linux/zabbix.cron
