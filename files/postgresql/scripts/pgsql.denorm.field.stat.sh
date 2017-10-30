@@ -28,7 +28,7 @@ if [ -z "$3" ];
     query="$query_substr WHERE datname = '$dbname'"
 fi
 
-r=$(psql -qAtX -F: -c "$query" -h localhost -U "$username" "$dbname")
+r=$(psql -qAtX -F: -c "$query" -h localhost -U "$username" "$dbname"|head -n 1)
 exit_code=$?
 if [ $exit_code != 0 ]; then
         printf "Error : [%d] when executing query '$q'\n" $exit_code
