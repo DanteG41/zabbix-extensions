@@ -10,8 +10,11 @@ upstreams=$(grep -ilr "upstream.*{" ${NGINX_CONFDIR} |\
       if ($1=="server") {
         if ($2 ~/unix:\//) next
         if ($2 !~ /:[0-9]+/ ) {
-          if ($2~/http:\/\//) {PORT=":80"}
-          if ($2~/https:\/\//) {PORT=":443"}
+          switch ($2) {
+            case /http:\/\//: PORT=":80";break
+            case /https:\/\//: PORT=":443";break
+            default: PORT=":80"
+          }
         }
         if ($2~/https:\/\//) {SSL="s"}
         gsub(/(;|https?:\/\/)/,"",$2)
@@ -37,4 +40,3 @@ done <<< "${upstreams}"
 
 printf "\n\t]\n";
 printf "}\n";
-
