@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="1b869ef"
+ZBX_EXT_GIT_SHA1="e746047"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
@@ -15,7 +15,7 @@ LICENSE="as-is"
 SLOT="0"
 KEYWORDS="amd64 ~x86"
 IUSE="asterisk flashcache dmcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
-sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash docker"
+sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash docker nginx"
 
 HWRAID="adaptec smartarray megacli"
 
@@ -40,7 +40,8 @@ DEPEND=">=net-analyzer/zabbix-2.0.0
 		ruby-vines? ( dev-db/redis )
 		elasticsearch? ( net-misc/curl )
 		logstash? ( net-misc/curl )
-		docker? ( app-emulation/docker )"
+		docker? ( app-emulation/docker )
+		nginx? ( www-servers/nginx )"
 RDEPEND="${DEPEND}"
 
 src_install() {
@@ -56,7 +57,8 @@ src_install() {
 		files/linux/scripts/swap.discovery.sh \
 		files/linux/scripts/check-netif-speed.sh \
 		files/linux/scripts/cave-pkg-discovery.sh \
-		files/linux/scripts/check-oom.awk
+		files/linux/scripts/check-oom.awk \
+		files/linux/scripts/bonding-discovery.sh
 
 	insinto /etc/cron.d
 	doins files/linux/zabbix.cron
@@ -136,7 +138,9 @@ src_install() {
 			files/postgresql/scripts/pgsql.trigger.sh \
 			files/postgresql/scripts/pgsql.wal.write.sh \
 			files/postgresql/scripts/pgsql.denorm.field.discovery.sh \
-			files/postgresql/scripts/pgsql.denorm.field.stat.sh
+			files/postgresql/scripts/pgsql.denorm.field.stat.sh \
+			files/postgresql/scripts/pgsql.stat_statements.sh \
+			files/postgresql/scripts/pgsql.bgwriter.sh
 	fi
 
 	if use glusterfs-client; then
@@ -179,8 +183,10 @@ src_install() {
         doins files/skytools/skytools.conf
         exeinto /usr/libexec/zabbix-extensions/scripts
         doexe \
-            files/skytools/scripts/skytools.pgqd.queue.discovery.sh \
-			files/skytools/scripts/skytools.pgqd.sh
+        	files/skytools/scripts/skytools.pgqd.queue.discovery.sh \
+		files/skytools/scripts/skytools.pgqd.sh \
+		files/skytools/scripts/skytools.londiste.sh
+
     fi
 
 	if use testcookie; then
@@ -281,7 +287,13 @@ src_install() {
 			files/docker/scripts/docker-container-status.sh
 	fi
 
-
+	if use nginx; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/nginx/nginx.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe \
+			files/nginx/scripts/nginx-upstream-discovery.sh
+	fi
 }
 
 pkg_postinst() {
