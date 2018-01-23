@@ -4,7 +4,7 @@
 
 NGINX_CONFDIR="/etc/nginx"
 
-upstreams=$(grep -ilr "upstream.*{" ${NGINX_CONFDIR} |\
+upstreams=$(grep -silr "upstream.*{" ${NGINX_CONFDIR} |\
   while read file;do \
     awk 'SSL=""; PORT=""; /upstream.*{/,/}/ {
       if ($1=="server") {
