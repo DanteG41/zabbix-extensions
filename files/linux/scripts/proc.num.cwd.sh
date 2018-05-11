@@ -15,11 +15,11 @@ match=${3:-false}
 
 [ "$#" -lt 2 ] && zbx_ns
 
-while read pid; do
-  if [[ ${DIR} == $(sudo lsof  -a -p ${pid} -d cwd -Fn|sed -n 's/^n//p') ]]
+while read cwd; do
+  if [[ ${DIR} == ${cwd} ]]
     then ((proc_num_match++))
     else ((proc_num_unmatch++))
   fi
-done < <(pgrep -f ${CMDLINE})
+done < <(sudo lsof  -a -p $(awk '{printf $0","}' <(pgrep -f ${CMDLINE})) -d cwd -Fn|sed -n 's/^n//p')
 
 ${match} && echo ${proc_num_match} || echo ${proc_num_unmatch}
