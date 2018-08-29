@@ -133,6 +133,9 @@ src_install() {
 			files/postgresql/scripts/pgsql.relation.size.sh \
 			files/postgresql/scripts/pgsql.relation.stat.sh \
 			files/postgresql/scripts/pgsql.relation.tuples.sh \
+			files/postgresql/scripts/pgsql.inherited.indexes.size.sh \
+			files/postgresql/scripts/pgsql.inherited.relation.size.sh \
+			files/postgresql/scripts/pgsql.inherited.relation.stat.sh \
 			files/postgresql/scripts/pgsql.streaming.lag.sh \
 			files/postgresql/scripts/pgsql.transactions.sh \
 			files/postgresql/scripts/pgsql.transactions.long.sh \
