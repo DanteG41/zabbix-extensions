@@ -47,7 +47,7 @@ case "$PARAM" in
 	q="SELECT toast_blks_read FROM pg_statio_user_tables WHERE relname = '$RELATION' and schemaname = '$SCHEMA'"
 ;;
 'toasthits' )
-	q="SELECT toast_blks_read FROM pg_statio_user_tables WHERE relname = '$RELATION' and schemaname = '$SCHEMA'"
+	q="SELECT toast_blks_hit FROM pg_statio_user_tables WHERE relname = '$RELATION' and schemaname = '$SCHEMA'"
 ;;
 'seqscan' )
 	q="SELECT seq_scan FROM pg_stat_user_tables WHERE relname = '$RELATION' and schemaname = '$SCHEMA'"
