@@ -134,6 +134,7 @@ src_install() {
 			files/postgresql/scripts/pgsql.relation.size.sh \
 			files/postgresql/scripts/pgsql.relation.stat.sh \
 			files/postgresql/scripts/pgsql.relation.tuples.sh \
+			files/postgresql/scripts/pgsql.relations.discovery.sh \
 			files/postgresql/scripts/pgsql.inherited.indexes.size.sh \
 			files/postgresql/scripts/pgsql.inherited.relation.size.sh \
 			files/postgresql/scripts/pgsql.inherited.relation.stat.sh \
