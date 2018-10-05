@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS monitoring.monitored_relations (
     relid oid NOT NULL,
     monitored boolean DEFAULT true NOT NULL,
     inheritance boolean DEFAULT false NOT NULL,
-    CONSTRAINT monitored_relations_uniq UNIQUE(relid,relname)
+    CONSTRAINT monitored_relations_uniq UNIQUE(relid)
 );
 
 ALTER TABLE monitoring.monitored_relations OWNER TO postgres;
