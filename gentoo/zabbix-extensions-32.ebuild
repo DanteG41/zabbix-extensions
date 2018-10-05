@@ -60,7 +60,8 @@ src_install() {
 		files/linux/scripts/check-oom.awk \
 		files/linux/scripts/bonding-discovery.sh \
 		files/linux/scripts/proc.num.cwd.sh \
-		files/linux/scripts/rsyslog.ping.sh
+		files/linux/scripts/rsyslog.ping.sh \
+		files/linux/scripts/ip-external-discovery.sh
 
 	insinto /etc/cron.d
 	doins files/linux/zabbix.cron
