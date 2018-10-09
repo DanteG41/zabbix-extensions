@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="0792989"
+ZBX_EXT_GIT_SHA1="47aad3b"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
