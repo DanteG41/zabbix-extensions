@@ -9,7 +9,7 @@ BEGIN {
  
 {
 	gsub("[][]","",$1)
-	if ($1>OFFSET && $1 ~ "[0-9]+$" && $0 ~ "Out of memory") {
+	if ($1+0>OFFSET+0 && $1 ~ "[0-9]+$" && $0 ~ "Out of memory") {
 		COUNT++
 		TIME=$1
 	}
