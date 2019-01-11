@@ -5,6 +5,7 @@ Cmnd_Alias FILES = /usr/bin/lsof
 Cmnd_Alias ASTERISK = /usr/sbin/asterisk -x sip show peer*
 Cmnd_Alias DEVICEMAPPER = /sbin/dmsetup status *, /sbin/dmsetup table, /sbin/dmsetup ls, /sbin/dmsetup table *
 Cmnd_Alias SPHINX_CHECK = /usr/libexec/zabbix-extensions/scripts/sphinx2.fd.sh
+Cmnd_Alias PICA_TEST = /usr/bin/pica -r
 
-zabbix ALL=(root) NOPASSWD: HWRAID, FILES, ASTERISK, DEVICEMAPPER
+zabbix ALL=(root) NOPASSWD: HWRAID, FILES, ASTERISK, DEVICEMAPPER, PICA_TEST
 zabbix ALL=(sphinx) NOPASSWD: SPHINX_CHECK
