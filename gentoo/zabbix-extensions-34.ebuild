@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="5a734fa"
+ZBX_EXT_GIT_SHA1="0e7589f"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
@@ -248,7 +248,7 @@ src_install() {
 		insinto /etc/zabbix/zabbix_agentd.d
 		doins files/hwraid-fusion-mpt/fusion-mpt.conf
 		exeinto /usr/libexec/zabbix-extensions/scripts
-	    doexec \
+	    doexe \
 		    	files/hwraid-fusion-mpt/scripts/mpt-ld-discovery.sh \
 			files/hwraid-fusion-mpt/scripts/mpt-pd-discovery.sh
 	fi

@@ -26,6 +26,7 @@
 		<flag name='hwraid_adaptec'>Gathering Adaptec RAID controllers information via arcconf.</flag>
 		<flag name='hwraid_megacli'>Gathering RAID controllers information via MegaCLI.</flag>
 		<flag name='hwraid_smartarray'>Gathering information from SmartArray RAID controllers via hpacucli.</flag>
+		<flag name='hwraid_fusion_mpt'>Gathering information from LSI Fusion MPT SAS RAID controllers via mpt-status.</flag>
 		<flag name='diskio'>Iops, utilization, discovery block devices.</flag>
 		<flag name='smartmon'>Get value from SMART.</flag>
 	</use>
