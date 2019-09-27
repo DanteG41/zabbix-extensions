@@ -1,6 +1,6 @@
 # Sudo rules for zabbix
 
-Cmnd_Alias HWRAID = /opt/bin/arcconf, /usr/sbin/hpacucli, /opt/bin/megacli, /usr/sbin/smartctl, /usr/sbin/mpt-status
+Cmnd_Alias HWRAID = /usr/bin/arcconf, /usr/sbin/hpacucli, /opt/bin/megacli, /usr/sbin/smartctl, /usr/sbin/mpt-status
 Cmnd_Alias FILES = /usr/bin/lsof
 Cmnd_Alias ASTERISK = /usr/sbin/asterisk -x sip show peer*
 Cmnd_Alias DEVICEMAPPER = /sbin/dmsetup status *, /sbin/dmsetup table, /sbin/dmsetup ls, /sbin/dmsetup table *
