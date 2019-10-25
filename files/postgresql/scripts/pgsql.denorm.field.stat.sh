@@ -16,7 +16,7 @@ PARAM="$1"
 
 case "$PARAM" in
 'state' )
-        query_substr="SELECT state FROM denormalization.fields where title = '$2'"
+        query_substr="SELECT state FROM denormalization.fields where title = '$2' LIMIT 1"
 ;;
 * ) echo "ZBX_NOTSUPPORTED"; exit 1;;
 esac
@@ -28,7 +28,7 @@ if [ -z "$3" ];
     query="$query_substr WHERE datname = '$dbname'"
 fi
 
-r=$(psql -qAtX -F: -c "$query" -h localhost -U "$username" "$dbname"|head -n 1)
+r=$(psql -qAtX -F: -c "$query" -h localhost -U "$username" "$dbname")
 exit_code=$?
 if [ $exit_code != 0 ]; then
         printf "Error : [%d] when executing query '$q'\n" $exit_code
