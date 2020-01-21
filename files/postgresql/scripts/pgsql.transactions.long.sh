@@ -117,6 +117,8 @@ select
  usename, 
  application_name,
  pg_blocking_pids(pid) as blocked_by,
+ wait_event_type,
+ wait_event,
  NOW() - xact_start as exectime,
  substr (query, 1, 100) as query
 FROM pg_stat_activity
@@ -131,6 +133,8 @@ select
  usename, 
  application_name,
  pg_blocking_pids(pid) as blocked_by,
+ wait_event_type,
+ wait_event,
  NOW() - xact_start as exectime,
  substr (query, 1, 100) as query
 FROM pg_stat_activity
