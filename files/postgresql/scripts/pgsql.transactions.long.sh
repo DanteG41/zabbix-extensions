@@ -24,11 +24,11 @@ select
  pid, 
  usename, 
  application_name, 
- NOW() - xact_start, 
- substr (query, 1, 100)
+ NOW() - xact_start as exectime,
+ substr (query, 1, 100) as query
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'str_execute_without_autovacuum' )
@@ -37,12 +37,12 @@ select
  pid, 
  usename, 
  application_name, 
- NOW() - xact_start, 
- substr (query, 1, 100)
+ NOW() - xact_start as exectime,
+ substr (query, 1, 100) as query
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
 AND query NOT LIKE 'autovacuum:%'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'time_execute' )
@@ -51,7 +51,7 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'time_execute_without_autovacuum' )
@@ -61,7 +61,7 @@ select
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
 AND query NOT LIKE 'autovacuum:%'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'str_wait' )
@@ -70,11 +70,11 @@ select
  pid, 
  usename, 
  application_name, 
- NOW() - xact_start, 
- substr (query, 1, 100)
+ NOW() - xact_start as exectime,
+ substr (query, 1, 100) as query
 from pg_stat_activity
 WHERE waiting = 't'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'str_wait_without_autovacuum' )
@@ -83,12 +83,12 @@ select
  pid, 
  usename, 
  application_name, 
- NOW() - xact_start, 
- substr (query, 1, 100)
+ NOW() - xact_start as exectime,
+ substr (query, 1, 100) as query
 from pg_stat_activity
 WHERE waiting = 't'
 AND query NOT LIKE 'autovacuum:%'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'time_wait' )
@@ -97,7 +97,7 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 WHERE waiting = 't'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'time_wait_without_autovacuum' )
@@ -107,54 +107,55 @@ select
 from pg_stat_activity
 WHERE waiting = 't'
 AND query NOT LIKE 'autovacuum:%'
-order by NOW() - interval '$PARAM minutes' desc
+order by xact_start
 limit 1;"
 ;;
 'str_wait_event' )
 query="
-select 
+select
  pid, 
  usename, 
- application_name, 
- NOW() - xact_start, 
- substr (query, 1, 100)
-from pg_stat_activity
-WHERE wait_event IS NOT NULL
-order by NOW() - interval '$PARAM minutes' desc
-limit 1;"
+ application_name,
+ pg_blocking_pids(pid) as blocked_by,
+ NOW() - xact_start as exectime,
+ substr (query, 1, 100) as query
+FROM pg_stat_activity
+WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%'
+ORDER BY xact_start
+LIMIT 1;"
 ;;
 'str_wait_event_without_autovacuum' )
 query="
-select 
+select
  pid, 
  usename, 
- application_name, 
- NOW() - xact_start, 
- substr (query, 1, 100)
-from pg_stat_activity
-WHERE wait_event IS NOT NULL
-AND query NOT LIKE 'autovacuum:%'
-order by NOW() - interval '$PARAM minutes' desc
-limit 1;"
+ application_name,
+ pg_blocking_pids(pid) as blocked_by,
+ NOW() - xact_start as exectime,
+ substr (query, 1, 100) as query
+FROM pg_stat_activity
+WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%' AND query NOT LIKE 'autovacuum:%'
+ORDER BY xact_start
+LIMIT 1;"
 ;;
 'time_wait_event' )
 query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE wait_event IS NOT NULL
-order by NOW() - interval '$PARAM minutes' desc
-limit 1;"
+WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%'
+ORDER BY xact_start
+LIMIT 1;"
 ;;
 'time_wait_event_without_autovacuum' )
 query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE wait_event IS NOT NULL
-AND query NOT LIKE 'autovacuum:%'
-order by NOW() - interval '$PARAM minutes' desc
-limit 1;"
+WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension')
+AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%'
+ORDER BY xact_start
+LIMIT 1;"
 ;;
 '*' ) echo "ZBX_NOTSUPPORTED";exit 1;;
 esac
