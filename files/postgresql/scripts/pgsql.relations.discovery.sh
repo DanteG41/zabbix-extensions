@@ -22,7 +22,7 @@ TYPE="$1"
 
 case "$TYPE" in
 'tables' )
-	query="SELECT OID::regclass::text FROM pg_class WHERE relkind IN ('r', 'm') AND OID IN (SELECT relid FROM monitoring.monitored_relations WHERE monitored=true AND inheritance=false)"
+  query="SELECT OID::regclass::text FROM pg_class WHERE relkind IN ('r', 'm') AND OID IN (SELECT relid FROM monitoring.monitored_relations WHERE monitored=true AND inheritance=false)"
 ;;
 'parent_tables' )
   query="SELECT OID::regclass::text FROM pg_class WHERE relkind ='r' AND OID IN (SELECT relid FROM monitoring.monitored_relations WHERE monitored=true AND inheritance=true)"
