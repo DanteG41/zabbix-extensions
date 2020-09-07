@@ -50,9 +50,7 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-where xact_start < NOW() - interval '$PARAM minutes'
-order by xact_start
-limit 1;"
+where xact_start < NOW() - interval '$PARAM minutes';"
 ;;
 'time_execute_without_autovacuum' )
 query="
@@ -60,9 +58,7 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
-AND query NOT LIKE 'autovacuum:%'
-order by xact_start
-limit 1;"
+AND query NOT LIKE 'autovacuum:%';"
 ;;
 'str_wait' )
 query="
@@ -96,9 +92,7 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE waiting = 't'
-order by xact_start
-limit 1;"
+WHERE waiting = 't';"
 ;;
 'time_wait_without_autovacuum' )
 query="
@@ -106,9 +100,7 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 WHERE waiting = 't'
-AND query NOT LIKE 'autovacuum:%'
-order by xact_start
-limit 1;"
+AND query NOT LIKE 'autovacuum:%';"
 ;;
 'str_wait_event' )
 query="
@@ -147,9 +139,7 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%'
-ORDER BY xact_start
-LIMIT 1;"
+WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%';"
 ;;
 'time_wait_event_without_autovacuum' )
 query="
@@ -157,9 +147,7 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension')
-AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%'
-ORDER BY xact_start
-LIMIT 1;"
+AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%';"
 ;;
 '*' ) echo "ZBX_NOTSUPPORTED";exit 1;;
 esac
