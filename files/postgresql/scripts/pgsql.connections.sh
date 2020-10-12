@@ -55,7 +55,7 @@ case "$PG_VER" in
           query="SELECT COUNT(*) FROM pg_stat_activity WHERE waiting <> 'f';"
   ;;
   'waiting_event' )
-          query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event IS NOT NULL;"
+          query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock';"
   ;;
   'total_pct' )
           query="select count(*)*100/(select (setting::int) from pg_settings where name = 'max_connections') from pg_stat_activity;"
@@ -78,7 +78,7 @@ case "$PG_VER" in
           query="SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active' AND backend_type = 'client backend';"
   ;;
   'waiting_event' )
-          query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event IS NOT NULL AND backend_type = 'client backend';"
+          query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND backend_type = 'client backend';"
   ;;
   'total_pct' )
           query="select count(*)*100/(select (setting::int) from pg_settings where name = 'max_connections') from pg_stat_activity WHERE state IS NOT NULL AND backend_type = 'client backend';"
