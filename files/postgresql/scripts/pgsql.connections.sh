@@ -51,11 +51,12 @@ case "$PG_VER" in
   'active' )
           query="SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
   ;;
-  'waiting' )
-          query="SELECT COUNT(*) FROM pg_stat_activity WHERE waiting <> 'f';"
-  ;;
-  'waiting_event' )
-          query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock';"
+  'waiting'|'waiting_event' )
+	  if [ $PG_VER == '9.6' ];then
+		  query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock';"
+	  else
+		  query="SELECT COUNT(*) FROM pg_stat_activity WHERE waiting <> 'f';"
+	  fi
   ;;
   'total_pct' )
           query="select count(*)*100/(select (setting::int) from pg_settings where name = 'max_connections') from pg_stat_activity;"
@@ -77,7 +78,7 @@ case "$PG_VER" in
   'active' )
           query="SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active' AND backend_type = 'client backend';"
   ;;
-  'waiting_event' )
+  'waiting'|'waiting_event' )
           query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND backend_type = 'client backend';"
   ;;
   'total_pct' )
