@@ -47,7 +47,10 @@ case "$PARAM" in
 'transactions_counter' )
 	query="SELECT sum(xact_commit+xact_rollback) FROM pg_stat_database;"
 ;;
-'*' ) echo "ZBX_NOTSUPPORTED"; exit 1;;
+'percent_towards_wraparound' )
+	query="SELECT ROUND(100*(max(age(datfrozenxid))/2000000000::float)) AS d FROM pg_catalog.pg_database;"
+;;
+* ) echo "ZBX_NOTSUPPORTED"; exit 1;;
 esac
 
 psql -qAtX -F: -c "$query" -h localhost -U "$username" "$dbname"

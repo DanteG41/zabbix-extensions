@@ -149,7 +149,7 @@ from pg_stat_activity
 WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension')
 AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%';"
 ;;
-'*' ) echo "ZBX_NOTSUPPORTED";exit 1;;
+* ) echo "ZBX_NOTSUPPORTED";exit 1;;
 esac
 resp=$(psql -qAtX -F"|" -c "$query" -h localhost -U "$username" "$dbname")
 if [ ! -z "$resp" ];then echo $resp ; exit 0;
