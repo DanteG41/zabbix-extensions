@@ -1,0 +1,3 @@
+# Author:	Mamedaliev K.O.
+# Description:	iostat merics cache
+*/5 * * * *	root iostat -yxd 150 1 > /run/zabbix/diskstats.tmp && mv /run/zabbix/diskstats.tmp /run/zabbix/diskstats.cache
