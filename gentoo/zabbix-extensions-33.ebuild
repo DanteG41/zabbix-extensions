@@ -1,8 +1,7 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
@@ -18,6 +17,11 @@ IUSE="asterisk flashcache dmcache glusterfs-client iostat keepalived memcached p
 sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash docker nginx imgproxy"
 
 HWRAID="adaptec smartarray megacli"
+RESTRICT="mirror"
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-33-arcconf-path.patch
+)
 
 for name in ${HWRAID}; do
 	IUSE+=" hwraid_${name}"

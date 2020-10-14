@@ -1,12 +1,13 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
+# $Header: $
 
-EAPI=6
+EAPI=5
 inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="0e7589f"
+ZBX_EXT_GIT_SHA1="33dcad0"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
@@ -14,14 +15,9 @@ LICENSE="as-is"
 SLOT="0"
 KEYWORDS="amd64 ~x86"
 IUSE="asterisk flashcache dmcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
-sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash docker nginx imgproxy"
+sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash docker nginx imgproxy zbot"
 
 HWRAID="adaptec smartarray megacli fusion_mpt"
-RESTRICT="mirror"
-
-PATCHES=(
-	"${FILESDIR}"/${PN}-34-arcconf-path.patch
-)
 
 for name in ${HWRAID}; do
 	IUSE+=" hwraid_${name}"
@@ -30,6 +26,7 @@ done
 DEPEND=">=net-analyzer/zabbix-2.0.0
 		app-admin/sudo
 		iostat? ( app-admin/sysstat )
+		diskio? ( app-admin/sysstat )
 		keepalived? ( sys-apps/iproute2 )
 		pgbouncer? ( dev-db/postgresql )
 		postgres? ( dev-db/postgresql )
@@ -47,7 +44,8 @@ DEPEND=">=net-analyzer/zabbix-2.0.0
 		logstash? ( net-misc/curl )
 		docker? ( app-emulation/docker )
 		nginx? ( www-servers/nginx )
-		imgproxy? ( www-servers/imgproxy )"
+		imgproxy? ( www-servers/imgproxy )
+		zbot? ( net-im/zbot )"
 RDEPEND="${DEPEND}"
 
 src_install() {
@@ -267,6 +265,8 @@ src_install() {
 		doins files/diskio/diskio.conf
 		exeinto /usr/libexec/zabbix-extensions/scripts
 		doexe files/diskio/scripts/vfs.dev.discovery.sh
+		insinto /etc/cron.d
+		doins files/linux/zabbix_diskio.cron
 	fi
 
 	if use smartmon; then
@@ -322,6 +322,11 @@ src_install() {
 	if use imgproxy; then
 		insinto /etc/zabbix/zabbix_agentd.d
 		doins files/imgproxy/imgproxy.conf
+	fi
+
+	if use zbot; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/zbot/zbot.conf
 	fi
 }
 
