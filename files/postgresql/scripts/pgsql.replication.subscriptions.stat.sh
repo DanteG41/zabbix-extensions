@@ -18,13 +18,13 @@ SUBSCRIPTION="$1"
 
 case "$PARAM" in
 'state' )
-	q="SELECT CASE COALESCE(pid,0) WHEN 0 THEN 0 ELSE 1 END as state FROM pg_stat_subscription WHERE subname = '$SUBSCRIPTION'"
+	q="SELECT min(CASE COALESCE(pid,0) WHEN 0 THEN 0 ELSE 1 END) as state FROM pg_stat_subscription WHERE subname = '$SUBSCRIPTION'"
 ;;
 'byte_lag' )
-	q="SELECT COALESCE(pg_wal_lsn_diff(received_lsn,latest_end_lsn),0) FROM pg_stat_subscription WHERE subname = '$SUBSCRIPTION'"
+	q="SELECT max(COALESCE(pg_wal_lsn_diff(received_lsn,latest_end_lsn),0)) as byte_lag FROM pg_stat_subscription WHERE subname = '$SUBSCRIPTION'"
 ;;
 'lag' )
-	q="SELECT COALESCE(round(extract(epoch from (last_msg_receipt_time - last_msg_send_time))),0)  FROM pg_stat_subscription WHERE subname = '$SUBSCRIPTION'"
+	q="SELECT max(COALESCE(round(extract(epoch from (last_msg_receipt_time - last_msg_send_time))),0)) as lag FROM pg_stat_subscription WHERE subname = '$SUBSCRIPTION'"
 ;;
 * ) exit 1;;
 esac
