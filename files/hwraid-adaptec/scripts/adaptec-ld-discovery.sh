@@ -3,7 +3,7 @@
 # Description:	Logical drives auto-discovery via arcconf. (TESTED WITH V5.20 (B17414))
 
 adp_list=$(sudo arcconf getversion |grep -w "^Controller" |cut -d# -f2)
-ld_list=$(for a in $adp_list; do sudo arcconf getconfig $a ld |grep -w "Logical device number" |awk '{print $4}' |while read ld ; do echo $a:$ld; done ; done)
+ld_list=$(for a in $adp_list; do sudo arcconf getconfig $a ld |grep -wi "Logical device number" |awk '{print $4}' |while read ld ; do echo $a:$ld; done ; done)
 first=1
 
 if [[ $1 = raw ]]; then

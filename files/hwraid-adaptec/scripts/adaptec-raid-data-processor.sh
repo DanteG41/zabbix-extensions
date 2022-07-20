@@ -111,14 +111,14 @@ cat $all_keys | while read key; do
   fi
   if [[ "$key" == *adaptec.bbu.status* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\])
-     value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |sed -n -e '/Controller Battery Information/,/Status/p' |grep -w Status |cut -d: -f2 |tr -d ' ')
+     value=$(sed -n -e "/adp begin $adp/,/adp end $adp/p" $data_out |sed -n -E -e '/Controller (ZMM|Battery) Information/,/Status/p' |grep -w Status |cut -d: -f2 |tr -d ' ')
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
   if [[ "$key" == *adaptec.ld.status* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      ld=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
-     value=$(sed -n -e "/ld begin $adp $ld/,/ld end $adp $ld/p" $data_out |grep -w "Status of logical device" |cut -d: -f2 |tr -d ' ')
+     value=$(sed -n -e "/ld begin $adp $ld/,/ld end $adp $ld/p" $data_out |grep -iw "Status of logical device" |cut -d: -f2 |tr -d ' ')
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
