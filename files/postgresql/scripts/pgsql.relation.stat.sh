@@ -82,4 +82,5 @@ case "$PARAM" in
 * ) exit 1;;
 esac
 
-echo $q |psql -h localhost -p 5432 -tA -U "$username" "$dbname"
+RESULT=$(psql -h localhost -p 5432 -tA -U "$username" "$dbname" -c "$q")
+if [ -z "$RESULT" ]; then echo 0; else echo $RESULT; fi
