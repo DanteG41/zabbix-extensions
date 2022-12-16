@@ -17,9 +17,9 @@ for instance in $PIDS;
     cmd=$(ps -o cmd= -p $instance)
     config=$(awk '{print $2}' <<< `getopt -u -q --long config: ${cmd}`)
 
-    MYSQL_HOST=$(awk -F[:=] '!/^(\s|\t)*#/&&/^(\s|\t)*listen.*mysql41/ {gsub(" ","", $0); print $2; matchs=1}; END {if (matchs!=1) exit 1}' $config) \
+    MYSQL_HOST=$(awk -F[:=] '!/^(\s|\t)*#/&&/^(\s|\t)*listen.*mysql41/ {gsub(" ","", $0); result=$2; matchs=1; exit} END {if (matchs!=1) exit 1;else print result}' $config) \
     || failed "ZBX_NOTSUPPORTED" $?
-    MYSQL_PORT=$(awk -F[:=] '!/^(\s|\t)*#/&&/^(\s|\t)*listen.*mysql41/ {gsub(" ","", $0); print $3; matchs=1}; END {if (matchs!=1) exit 1}' $config) \
+    MYSQL_PORT=$(awk -F[:=] '!/^(\s|\t)*#/&&/^(\s|\t)*listen.*mysql41/ {gsub(" ","", $0); result=$3; matchs=1; exit} END {if (matchs!=1) exit 1;else print result}' $config) \
     || failed "ZBX_NOTSUPPORTED" $?
     COUNT_CONF=$(awk '/^(\s|\t)*index(\s|\t)+/ {count++}; END {print count+0; matchs=1}; END {if (matchs!=1) exit 1}' $config) \
     || failed "ZBX_NOTSUPPORTED" $?
