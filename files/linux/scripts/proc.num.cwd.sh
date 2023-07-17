@@ -15,6 +15,11 @@ match=${3:-false}
 
 [ "$#" -lt 2 ] && zbx_ns
 
+if (! pgrep -f ${CMDLINE} > /dev/null ); then
+	  echo 0
+	    exit
+fi
+
 while read cwd; do
   if [[ ${DIR} == ${cwd} ]]
     then ((proc_num_match++))
