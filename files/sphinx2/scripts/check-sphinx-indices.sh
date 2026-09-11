@@ -4,13 +4,13 @@
 #  Description: Comparation between quantity of indices loaded into MySQL and count of its in sphinx.conf.
 #
 
-RESULT=0
-PIDS=$(pgrep -P1 searchd); [[ -z "$PIDS" ]] && failed "ZBX_NOTSUPPORTED" 1
-
 failed () {
   echo $1
   exit $2
 }
+
+RESULT=0
+PIDS=$(pgrep -P1 searchd); [[ -z "$PIDS" ]] && failed "ZBX_NOTSUPPORTED" 1
 
 for instance in $PIDS;
   do
