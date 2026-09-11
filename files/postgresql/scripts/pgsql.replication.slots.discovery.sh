@@ -13,7 +13,18 @@ if [ "$#" -lt 1 ];
     dbname="$1"
 fi
 
-query="SELECT slot_name FROM pg_replication_slots WHERE NOT temporary"
+. "$(dirname -- "$0")/pgsql.pgver.inc.sh"
+pgsql_cached_pgver
+
+# temporary column exists since PG 10
+case "$PG_VER" in
+9.* )
+  query="SELECT slot_name FROM pg_replication_slots"
+;;
+* )
+  query="SELECT slot_name FROM pg_replication_slots WHERE NOT temporary"
+;;
+esac
 
 slots=$(psql -h localhost -p 5432 -qtAX -F: -U "$username" "$dbname" -c "SET search_path = 'pg_catalog';$query")
 

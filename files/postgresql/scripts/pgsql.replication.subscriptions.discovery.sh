@@ -13,11 +13,21 @@ if [ "$#" -lt 1 ];
     dbname="$1"
 fi
 
-query="SELECT subname FROM pg_stat_subscription"
+. "$(dirname -- "$0")/pgsql.pgver.inc.sh"
+pgsql_cached_pgver
 
-subscriptions=$(psql -h localhost -p 5432 -qtAX -F: -U "$username" "$dbname" -c "SET search_path = 'pg_catalog';$query")
-
-exit_code=$?
+# logical replication / pg_stat_subscription exists since PG 10
+case "$PG_VER" in
+9.* )
+  subscriptions=""
+  exit_code=0
+;;
+* )
+  query="SELECT subname FROM pg_stat_subscription"
+  subscriptions=$(psql -h localhost -p 5432 -qtAX -F: -U "$username" "$dbname" -c "SET search_path = 'pg_catalog';$query")
+  exit_code=$?
+;;
+esac
 if [ $exit_code != 0 ]; then
   printf "Error : [%d] when executing query '$q'\n" $exit_code
   exit $exit_code

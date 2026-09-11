@@ -136,6 +136,7 @@ src_install() {
 			files/postgresql/scripts/pgsql.db.size.sh \
 			files/postgresql/scripts/pgsql.dbstat.sh \
 			files/postgresql/scripts/pgsql.indexes.size.sh \
+			files/postgresql/scripts/pgsql.pgver.inc.sh \
 			files/postgresql/scripts/pgsql.ping.sh \
 			files/postgresql/scripts/pgsql.relation.size.sh \
 			files/postgresql/scripts/pgsql.relation.stat.sh \

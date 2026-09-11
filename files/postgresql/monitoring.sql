@@ -40,8 +40,6 @@ ALTER FUNCTION monitoring.monitored_relations_add_relid() OWNER TO postgres;
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
-
 --
 -- Name: monitored_relations; Type: TABLE; Schema: monitoring; Owner: postgres
 --

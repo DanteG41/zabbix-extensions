@@ -16,14 +16,27 @@ fi
 
 PARAM="$1"
 
+. "$(dirname -- "$0")/pgsql.pgver.inc.sh"
+pgsql_cached_pgver
+
+case "$PG_VER" in
+9.*|10|11|12 )
+	TIME_COL=total_time
+;;
+* )
+	# PG 13+: total_time renamed to total_exec_time
+	TIME_COL=total_exec_time
+;;
+esac
+
 case "$PARAM" in
 'avg_query' )
-	query="SELECT (sum(total_time) / sum(calls))::numeric(6,3) AS avg_query FROM pg_stat_statements;"
+	query="SELECT (sum($TIME_COL) / sum(calls))::numeric(6,3) AS avg_query FROM pg_stat_statements;"
 ;;
 'calls' )
 	query="SELECT sum(calls) AS total_calls FROM pg_stat_statements"
 ;;
-'*' ) echo "ZBX_NOTSUPPORTED"; exit 1;;
+* ) echo "ZBX_NOTSUPPORTED"; exit 1;;
 esac
 
 psql -qAtX -F: -c "$query" -h localhost -U "$username" "$dbname"

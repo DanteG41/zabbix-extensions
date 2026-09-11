@@ -16,12 +16,22 @@ PARAM="$2"
 
 SLOT="$1"
 
+. "$(dirname -- "$0")/pgsql.pgver.inc.sh"
+pgsql_cached_pgver
+
 case "$PARAM" in
 'state' )
 	q="SELECT CASE active WHEN true THEN 1 ELSE 0 END as state FROM pg_replication_slots WHERE slot_name = '$SLOT';"
 ;;
 'byte_lag' )
-	q="SELECT pg_wal_lsn_diff(pg_current_wal_lsn(),confirmed_flush_lsn) FROM pg_replication_slots WHERE slot_name = '$SLOT'"
+	case "$PG_VER" in
+	9.* )
+		q="SELECT pg_xlog_location_diff(pg_current_xlog_location(),confirmed_flush_lsn) FROM pg_replication_slots WHERE slot_name = '$SLOT'"
+	;;
+	* )
+		q="SELECT pg_wal_lsn_diff(pg_current_wal_lsn(),confirmed_flush_lsn) FROM pg_replication_slots WHERE slot_name = '$SLOT'"
+	;;
+	esac
 ;;
 * ) exit 1;;
 esac

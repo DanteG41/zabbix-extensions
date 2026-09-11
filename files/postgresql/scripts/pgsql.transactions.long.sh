@@ -19,6 +19,19 @@ MODE="$2"
 # LISTEN / START_REPLICATION stay in pg_stat_activity for the session lifetime
 EXCLUDE_LONG_LIVED="AND ltrim(COALESCE(query, '')) NOT ILIKE 'LISTEN%' AND ltrim(COALESCE(query, '')) NOT ILIKE 'START_REPLICATION%'"
 
+. "$(dirname -- "$0")/pgsql.pgver.inc.sh"
+pgsql_cached_pgver
+
+# wait_event_type exists since PG 9.6; older versions use the waiting column
+case "$PG_VER" in
+9.[4-5] )
+	WAIT_COND="waiting = 't'"
+;;
+* )
+	WAIT_COND="wait_event_type = 'Lock'"
+;;
+esac
+
 case "$MODE" in
 'str_execute' )
 query="
@@ -75,7 +88,7 @@ select
  NOW() - xact_start as exectime,
  substr (query, 1, 100) as query
 from pg_stat_activity
-WHERE waiting = 't'
+WHERE $WAIT_COND
 $EXCLUDE_LONG_LIVED
 order by xact_start
 limit 1;"
@@ -89,7 +102,7 @@ select
  NOW() - xact_start as exectime,
  substr (query, 1, 100) as query
 from pg_stat_activity
-WHERE waiting = 't'
+WHERE $WAIT_COND
 AND query NOT LIKE 'autovacuum:%'
 $EXCLUDE_LONG_LIVED
 order by xact_start
@@ -100,7 +113,7 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE waiting = 't'
+WHERE $WAIT_COND
 $EXCLUDE_LONG_LIVED;"
 ;;
 'time_wait_without_autovacuum' )
@@ -108,7 +121,7 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE waiting = 't'
+WHERE $WAIT_COND
 AND query NOT LIKE 'autovacuum:%'
 $EXCLUDE_LONG_LIVED;"
 ;;
