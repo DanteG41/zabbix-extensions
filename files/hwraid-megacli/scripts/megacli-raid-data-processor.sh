@@ -44,7 +44,7 @@ echo "### ld section end ###" >> $data_tmp
 echo "### pd section begin ###" >> $data_tmp
 for pd in $pd_list;
   do
-    a=$(echo $ld|cut -d: -f1)
+    a=$(echo $pd|cut -d: -f1)
     e=$(echo $pd|cut -d: -f2)
     p=$(echo $pd|cut -d: -f3)
     echo "### pd begin $a $e $p ###" >> $data_tmp
@@ -150,7 +150,7 @@ cat $all_keys | while read key; do
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      enc=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
      pd=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f3)
-     value=$(sed -n -e "/pd begin $adp $enc $pd/,/ld end $adp $enc $pd/p" $data_out |grep -m1 -w "^Media Error Count:" |cut -d: -f2 |tr -d " ")
+     value=$(sed -n -e "/pd begin $adp $enc $pd/,/pd end $adp $enc $pd/p" $data_out |grep -m1 -w "^Media Error Count:" |cut -d: -f2 |tr -d " ")
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
@@ -158,7 +158,7 @@ cat $all_keys | while read key; do
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      enc=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
      pd=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f3)
-     value=$(sed -n -e "/pd begin $adp $enc $pd/,/ld end $adp $enc $pd/p" $data_out |grep -m1 -w "^Other Error Count:" |cut -d: -f2 |tr -d " ")
+     value=$(sed -n -e "/pd begin $adp $enc $pd/,/pd end $adp $enc $pd/p" $data_out |grep -m1 -w "^Other Error Count:" |cut -d: -f2 |tr -d " ")
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
@@ -166,7 +166,7 @@ cat $all_keys | while read key; do
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      enc=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
      pd=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f3)
-     value=$(sed -n -e "/pd begin $adp $enc $pd/,/ld end $adp $enc $pd/p" $data_out |grep -m1 -w "^Predictive Failure Count:" |cut -d: -f2 |tr -d " ")
+     value=$(sed -n -e "/pd begin $adp $enc $pd/,/pd end $adp $enc $pd/p" $data_out |grep -m1 -w "^Predictive Failure Count:" |cut -d: -f2 |tr -d " ")
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
@@ -174,7 +174,7 @@ cat $all_keys | while read key; do
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      enc=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
      pd=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f3)
-     value=$(sed -n -e "/pd begin $adp $enc $pd/,/ld end $adp $enc $pd/p" $data_out |grep -m1 -w "^Firmware state:" |cut -d" " -f3 |tr -d ,)
+     value=$(sed -n -e "/pd begin $adp $enc $pd/,/pd end $adp $enc $pd/p" $data_out |grep -m1 -w "^Firmware state:" |cut -d" " -f3 |tr -d ,)
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
@@ -182,7 +182,7 @@ cat $all_keys | while read key; do
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      enc=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
      pd=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f3)
-     value=$(sed -n -e "/pd begin $adp $enc $pd/,/ld end $adp $enc $pd/p" $data_out |grep -m1 -w "^Drive Temperature" |awk '{print $3}' |grep -oE '[0-9]+')
+     value=$(sed -n -e "/pd begin $adp $enc $pd/,/pd end $adp $enc $pd/p" $data_out |grep -m1 -w "^Drive Temperature" |awk '{print $3}' |grep -oE '[0-9]+')
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi
