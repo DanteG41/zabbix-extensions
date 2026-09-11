@@ -44,6 +44,8 @@ case "$MODE" in
 	maxLocalSupported=$(ethtool $physIfName |sed -n -e '/Link partner advertised link modes:/,/Link partner advertised pause frame use:/p' |grep -oE '[0-9]+' |uniq |sort -n |tail -n1)
 	localCurrent=$(ethtool $physIfName |grep -m1 Speed: |grep -oE '[0-9]+')
 
+	[[ -z "$localCurrent" || -z "$maxLocalSupported" || -z "$maxRemoteSupported" ]] && { echo "FATAL: could not determine speed/capabilities for $physIfName (ethtool reported no usable value)."; exit 1; }
+
 	[[ $localCurrent -lt $maxLocalSupported && $localCurrent -lt $maxRemoteSupported ]] && { echo "$physIfName: current interface speed less then supported"; exit 1; }
 
 	echo OK; exit 0 
