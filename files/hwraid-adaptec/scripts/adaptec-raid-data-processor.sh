@@ -43,7 +43,7 @@ echo "### ld section end ###" >> $data_tmp
 echo "### pd section begin ###" >> $data_tmp
 for pd in $pd_list;
   do
-    a=$(echo $ld|cut -d: -f1)
+    a=$(echo $pd|cut -d: -f1)
     p=$(echo $pd|cut -d: -f2)
     echo "### pd begin $a $p ###" >> $data_tmp
     $arcconf getconfig $a pd >> $data_tmp
@@ -125,7 +125,7 @@ cat $all_keys | while read key; do
   if [[ "$key" == *adaptec.pd.status* ]]; then
      adp=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f1)
      pd=$(echo $key |grep -o '\[.*\]' |tr -d \[\] |cut -d: -f2)
-     value=$(sed -n -e "/pd begin $adp $pd/,/ld end $adp $pd/p" $data_out |sed -n -e "/Device #$pd/,/Device #/p" |grep -m1 -wE '[ ]+State[ ]+' |cut -d: -f2 |tr -d ' ')
+     value=$(sed -n -e "/pd begin $adp $pd/,/pd end $adp $pd/p" $data_out |sed -n -e "/Device #$pd/,/Device #/p" |grep -m1 -wE '[ ]+State[ ]+' |cut -d: -f2 |tr -d ' ')
      [[ -z "$value" ]] && value="ZBX_NOTSUPPORTED"
      echo "$(hostname) $key $value" >> $zbx_data
   fi

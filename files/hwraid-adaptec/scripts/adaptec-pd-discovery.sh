@@ -5,7 +5,7 @@
 adp_list=$(sudo arcconf getversion |grep -w "^Controller" |cut -d# -f2)
 pd_list=$(for a in $adp_list; 
             do
-              sudo arcconf getconfig 1 pd |grep -B1 -w "Device is a Hard drive" |grep -wE "Device.*[0-9]+" |cut -d# -f2 |awk -v adp=$a '{print adp":"$1}' 
+              sudo arcconf getconfig $a pd |grep -B1 -w "Device is a Hard drive" |grep -wE "Device.*[0-9]+" |cut -d# -f2 |awk -v adp=$a '{print adp":"$1}'
             done)
 first=1
 
