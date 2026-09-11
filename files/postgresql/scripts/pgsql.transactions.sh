@@ -15,28 +15,30 @@ if [ "$#" -lt 2 ];
 fi
 
 PARAM="$1"
+# LISTEN / START_REPLICATION stay in pg_stat_activity for the session lifetime
+EXCLUDE_LONG_LIVED="AND ltrim(COALESCE(query, '')) NOT ILIKE 'LISTEN%' AND ltrim(COALESCE(query, '')) NOT ILIKE 'START_REPLICATION%'"
 
 case "$PARAM" in
 'idle' )
-        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state like 'idle in transaction%';"
+        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state like 'idle in transaction%' $EXCLUDE_LONG_LIVED;"
 ;;
 'active' )
-	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state NOT like 'idle%'"
+	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state NOT like 'idle%' $EXCLUDE_LONG_LIVED"
 ;;
 'active_without_autovacuum' )
-	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state NOT like 'idle%' AND query NOT LIKE 'autovacuum:%'"
+	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state NOT like 'idle%' AND query NOT LIKE 'autovacuum:%' $EXCLUDE_LONG_LIVED"
 ;;
 'waiting' )
-	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE waiting = 't'"
+	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE waiting = 't' $EXCLUDE_LONG_LIVED"
 ;;
 'waiting_without_autovacuum' )
-        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE waiting = 't' AND query NOT LIKE 'autovacuum:%'"
+        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE waiting = 't' AND query NOT LIKE 'autovacuum:%' $EXCLUDE_LONG_LIVED"
 ;;
 'waiting_event' )
-        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%'"
+        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%' $EXCLUDE_LONG_LIVED"
 ;;
 'waiting_event_without_autovacuum' )
-        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%'"
+        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%' $EXCLUDE_LONG_LIVED"
 ;;
 'pending_xa_count' )
 	query="SELECT count(*) FROM pg_prepared_xacts where COALESCE(EXTRACT (EPOCH FROM age(NOW(), prepared)), 0) > 1000;"

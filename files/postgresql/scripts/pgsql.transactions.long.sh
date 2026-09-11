@@ -16,6 +16,8 @@ fi
 
 PARAM="$1"
 MODE="$2"
+# LISTEN / START_REPLICATION stay in pg_stat_activity for the session lifetime
+EXCLUDE_LONG_LIVED="AND ltrim(COALESCE(query, '')) NOT ILIKE 'LISTEN%' AND ltrim(COALESCE(query, '')) NOT ILIKE 'START_REPLICATION%'"
 
 case "$MODE" in
 'str_execute' )
@@ -28,6 +30,7 @@ select
  substr (query, 1, 100) as query
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
+$EXCLUDE_LONG_LIVED
 order by xact_start
 limit 1;"
 ;;
@@ -42,6 +45,7 @@ select
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
 AND query NOT LIKE 'autovacuum:%'
+$EXCLUDE_LONG_LIVED
 order by xact_start
 limit 1;"
 ;;
@@ -50,7 +54,8 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-where xact_start < NOW() - interval '$PARAM minutes';"
+where xact_start < NOW() - interval '$PARAM minutes'
+$EXCLUDE_LONG_LIVED;"
 ;;
 'time_execute_without_autovacuum' )
 query="
@@ -58,7 +63,8 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
-AND query NOT LIKE 'autovacuum:%';"
+AND query NOT LIKE 'autovacuum:%'
+$EXCLUDE_LONG_LIVED;"
 ;;
 'str_wait' )
 query="
@@ -70,6 +76,7 @@ select
  substr (query, 1, 100) as query
 from pg_stat_activity
 WHERE waiting = 't'
+$EXCLUDE_LONG_LIVED
 order by xact_start
 limit 1;"
 ;;
@@ -84,6 +91,7 @@ select
 from pg_stat_activity
 WHERE waiting = 't'
 AND query NOT LIKE 'autovacuum:%'
+$EXCLUDE_LONG_LIVED
 order by xact_start
 limit 1;"
 ;;
@@ -92,7 +100,8 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE waiting = 't';"
+WHERE waiting = 't'
+$EXCLUDE_LONG_LIVED;"
 ;;
 'time_wait_without_autovacuum' )
 query="
@@ -100,7 +109,8 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 WHERE waiting = 't'
-AND query NOT LIKE 'autovacuum:%';"
+AND query NOT LIKE 'autovacuum:%'
+$EXCLUDE_LONG_LIVED;"
 ;;
 'str_wait_event' )
 query="
@@ -115,6 +125,7 @@ select
  substr (query, 1, 100) as query
 FROM pg_stat_activity
 WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%'
+$EXCLUDE_LONG_LIVED
 ORDER BY xact_start
 LIMIT 1;"
 ;;
@@ -131,6 +142,7 @@ select
  substr (query, 1, 100) as query
 FROM pg_stat_activity
 WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%' AND query NOT LIKE 'autovacuum:%'
+$EXCLUDE_LONG_LIVED
 ORDER BY xact_start
 LIMIT 1;"
 ;;
@@ -139,7 +151,8 @@ query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
-WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%';"
+WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension') AND state NOT like 'idle%'
+$EXCLUDE_LONG_LIVED;"
 ;;
 'time_wait_event_without_autovacuum' )
 query="
@@ -147,7 +160,8 @@ select
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 WHERE wait_event_type IN ('Lock', 'LWLock', 'Extension')
-AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%';"
+AND query NOT LIKE 'autovacuum:%' AND state NOT like 'idle%'
+$EXCLUDE_LONG_LIVED;"
 ;;
 * ) echo "ZBX_NOTSUPPORTED";exit 1;;
 esac
