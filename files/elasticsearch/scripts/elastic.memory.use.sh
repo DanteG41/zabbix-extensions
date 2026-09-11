@@ -13,7 +13,7 @@ ps h -o rsz $(cat $PARAM/*.pid|xargs)|paste -sd+ |bc
 ps h -o rsz $(cat $PARAM/*.pid|xargs)|sort -rnk1 |head -n 1
 ;;
 'rsmall' )
-ps h -o rsz,cmd $(cat $PARAM/*.pid|xargs)|cut -d' ' -f1 |sort -rnk1 |tail -n 1
+ps h -o rsz,cmd $(cat $PARAM/*.pid|xargs)|awk '{print $1}' |sort -rnk1 |tail -n 1
 ;;
 'ravg' )
 echo \($(ps h -o rsz $(cat $PARAM/*.pid|xargs)|paste -sd+)\)\/$(ps h -o vsz $(cat $PARAM/*.pid|xargs)|wc -l) |bc
@@ -25,7 +25,7 @@ ps h -o vsz $(cat $PARAM/*.pid|xargs)|paste -sd+ |bc
 ps h -o vsz $(cat $PARAM/*.pid|xargs)|sort -rnk1 |head -n 1
 ;;
 'vsmall' )
-ps h -o vsz,cmd $(cat $PARAM/*.pid|xargs)|cut -d' ' -f1 |sort -rnk1 |tail -n 1
+ps h -o vsz,cmd $(cat $PARAM/*.pid|xargs)|awk '{print $1}' |sort -rnk1 |tail -n 1
 ;;
 'vavg' )
 echo \($(ps h -o vsz $(cat $PARAM/*.pid|xargs)|paste -sd+)\)\/$(ps h -o vsz $(cat $PARAM/*.pid|xargs)|wc -l) |bc
